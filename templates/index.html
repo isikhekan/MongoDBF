@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+</head>
+<body>
+<div>
+    <h1>Add book</h1>
+    <form method='post' action="add">
+        <p><label for='category_name'>Category</label></p>
+        <p>
+            <input name="category_name" placeholder="Select Category" id='category_name' type="text">
+        </p>
+        <p><label for='title'>Title</label></p>
+        <p>
+            <input name="title" placeholder="Insert Name" id='name' type="text">
+        </p>
+        <p>
+            <label for="creator">Creator</label>
+        </p>
+        <p><input name="creator" id='creator' type="text"></p>
+        <p>
+            <label for="content">Content</label>
+        </p>
+        <p><input name="content" id='content' type="text"></p>
+        <p><label for="createnadd">Create if category not exist and add book</label></p>
+        <p><input type="checkbox" id="createnadd" name="createnadd"></p>
+        <button type="submit">Add Item</button>
+    </form>
+    <form method="get" action="categories">
+        <button type="submit">categories</button>
+    </form>
+
+</div>
+
+<div id="data-list"></div>
+
+
+<script>
+    var data = {{ data | tojson }};
+    if (data['success'] == false) {
+        alert(data['error'])
+    }
+    data = JSON.parse(data['all_books'])
+
+    // HTML listesini oluşturmak için fonksiyon
+    function createList() {
+
+        var list = document.getElementById('data-list');
+        list.innerHTML = ''; // mevcut listeyi temizle
+        data.forEach(function (item, index) {
+            console.log(item)
+            var listItem = document.createElement('div');
+            listItem.innerHTML = '<span>' + item.title + ' ' + item.creator + ' - ' + item.content + ' - ' + item['created_at']['$date'] + '</span> <button onclick="editItem(' + index + ')">Edit</button> <button onclick="deleteItem(' + index + ')">Delete</button>';
+            list.appendChild(listItem);
+        });
+    }
+
+    // Edit butonuna basıldığında çağrılacak fonksiyon
+    function editItem(index) {
+        // ilgili objeyi düzenlenebilir yap
+        // Düzenleme için gerekli HTML'i oluştur
+         var item = data[index];
+         var editHtml = '<form method="post" action="update/'+ item['_id']['$oid'] +'"><input type="text" name="title" id="edit-title" value="' + item.title + '"> <input type="text" name="creator" id="edit-creator" value="' + item.creator + '"> <input name="content" type="text" id="edit-content" value="' + item.content + '"> <button type="submit">Save</button></form>';
+        document.getElementById('data-list').children[index].innerHTML = editHtml;
+    }
+
+    function deleteItem(index) {
+        console.log(index)
+        var item = data[index];
+        fetch('delete/' + item['_id']['$oid'], {
+            method: 'DELETE'
+        }).catch((e) => (console.log('basarısız', e))).then((res) => {
+                console.log(res)
+                location.reload()
+
+            }
+        )
+    }
+
+    // Sayfa yüklendiğinde listeyi oluştur
+    window.onload = createList;
+</script>
+
+</body>
+</html>
