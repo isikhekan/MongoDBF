@@ -7,7 +7,7 @@ categories = collections['categories']
 def split_category_id(data):
     return data.split("/")[-1]
 
-def find_book(key,value):##book tarafında import ettiğimde hata alıyorum birbirine bağlama hakkında
+def find_book(key,value):
     return books.find_one({key:value})
 
 

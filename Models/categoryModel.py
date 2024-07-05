@@ -2,7 +2,6 @@ class Category:
     def __init__(self, _id, name):
         self._id = _id
         self.name = name
-## booksmodel'deki gibi idye bak
     def to_dict(self):
         return {
             "_id": self._id,

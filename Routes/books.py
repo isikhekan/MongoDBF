@@ -8,8 +8,6 @@ books = Blueprint('books', __name__)
 @books.route('/api/books', methods=['GET'])
 def get_books_ctrl():
     return find_books()
-##POST PUT VE PATCH İSTEKLERİNİN PAYLOADLARI BODY'DEN GÖNDERİLMELİ . PARAMETREDEN DEĞİL
-##CATEGORY, BOOK GİBİ İŞLEM YAPILACAK ŞEYLERİ MODELDEN TÜRET
 
 @books.route('/api/books', methods=['POST'])
 def create_book_ctrl():
