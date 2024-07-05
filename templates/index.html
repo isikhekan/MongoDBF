@@ -7,10 +7,10 @@
 <body>
 <div>
     <h1>Add book</h1>
-    <form method='post' action="add">
-        <p><label for='category_name'>Category</label></p>
+    <form method='post' action="">
+        <p><label for='category'>Category</label></p>
         <p>
-            <input name="category_name" placeholder="Select Category" id='category_name' type="text">
+            <input name="category" placeholder="Select Category" id='category_name' type="text">
         </p>
         <p><label for='title'>Title</label></p>
         <p>
@@ -25,7 +25,7 @@
         </p>
         <p><input name="content" id='content' type="text"></p>
         <p><label for="createnadd">Create if category not exist and add book</label></p>
-        <p><input type="checkbox" id="createnadd" name="createnadd"></p>
+        <p><input type="checkbox" id="create_and_add" name="create_and_add"></p>
         <button type="submit">Add Item</button>
     </form>
     <form method="get" action="categories">
@@ -40,9 +40,9 @@
 <script>
     var data = {{ data | tojson }};
     if (data['success'] == false) {
-        alert(data['error'])
+        alert(data['message'])
     }
-    data = JSON.parse(data['all_books'])
+    data = JSON.parse(data['books'])
 
     // HTML listesini oluşturmak için fonksiyon
     function createList() {
@@ -50,26 +50,23 @@
         var list = document.getElementById('data-list');
         list.innerHTML = ''; // mevcut listeyi temizle
         data.forEach(function (item, index) {
-            console.log(item)
             var listItem = document.createElement('div');
             listItem.innerHTML = '<span>' + item.title + ' ' + item.creator + ' - ' + item.content + ' - ' + item['created_at']['$date'] + '</span> <button onclick="editItem(' + index + ')">Edit</button> <button onclick="deleteItem(' + index + ')">Delete</button>';
             list.appendChild(listItem);
         });
     }
-
+// EditItem kısmındaki isteği fetch ile yap
     // Edit butonuna basıldığında çağrılacak fonksiyon
     function editItem(index) {
-        // ilgili objeyi düzenlenebilir yap
-        // Düzenleme için gerekli HTML'i oluştur
          var item = data[index];
-         var editHtml = '<form method="post" action="update/'+ item['_id']['$oid'] +'"><input type="text" name="title" id="edit-title" value="' + item.title + '"> <input type="text" name="creator" id="edit-creator" value="' + item.creator + '"> <input name="content" type="text" id="edit-content" value="' + item.content + '"> <button type="submit">Save</button></form>';
+         var editHtml = '<form method="post" action="books/'+ item['_id']['$oid'] +'"><input type="text" name="title" id="edit-title" value="' + item.title + '"> <input type="text" name="creator" id="edit-creator" value="' + item.creator + '"> <input name="content" type="text" id="edit-content" value="' + item.content + '"> <button type="submit">Save</button></form>';
         document.getElementById('data-list').children[index].innerHTML = editHtml;
     }
 
     function deleteItem(index) {
         console.log(index)
         var item = data[index];
-        fetch('delete/' + item['_id']['$oid'], {
+        fetch('books/' + item['_id']['$oid'], {
             method: 'DELETE'
         }).catch((e) => (console.log('basarısız', e))).then((res) => {
                 console.log(res)
@@ -81,7 +78,38 @@
 
     // Sayfa yüklendiğinde listeyi oluştur
     window.onload = createList;
+    /*
+    * const form = document.getElementById('myForm');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Sayfanın yeniden yüklenmesini engellemek için
+
+    const formData = new FormData(form); // Form verilerini alın
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    try {
+        const response = await fetch('https://api.example.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // JSON formatında gönderileceğini belirtin
+            },
+            body: JSON.stringify(data), // Verileri JSON formatına dönüştürün
+        });
+
+        if (response.ok) {
+            console.log('Veriler başarıyla gönderildi.');
+        } else {
+            console.error('Veri gönderme hatası:', response.status);
+        }
+    } catch (error) {
+        console.error('Bir hata oluştu:', error);
+    }
+});*/
 </script>
 
 </body>
 </html>
+

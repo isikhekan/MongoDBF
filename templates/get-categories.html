@@ -12,11 +12,9 @@
 
     var data = {{ data | tojson }};
     data = JSON.parse(data)
-    print(data)
 
     // HTML listesini oluşturmak için fonksiyon
     function createList() {
-
         var list = document.getElementById('data-list');
         list.innerHTML = ''; // mevcut listeyi temizle
         data.forEach(function (item, index) {
@@ -31,22 +29,19 @@
         // ilgili objeyi düzenlenebilir yap
         var item = data[index];
         // Düzenleme için gerekli HTML'i oluştur
-        var editHtml = '<form method="post" action="update_category/' + item['_id']['$oid'] + '"> <input type="text" name="name" id="edit-name" value="' + item.name + '"> <button type="submit"> Save </button> </form>';
+        var editHtml = '<form method="post" action="categories/' + item['_id']['$oid'] + '"> <input type="text" name="name" id="edit-name" value="' + item.name + '"> <button type="submit"> Save </button> </form>';
         document.getElementById('data-list').children[index].innerHTML = editHtml;
     }
 
 
     function deleteItem(index) {
-        console.log(index)
         var item = data[index];
-        var deleteHtml = '<form method="delete" action="delete_category/' + item['_id']['$oid'] + '"> <button > Delete </button> </form>';
-        fetch('delete_category/' + item['_id']['$oid'], {
+        var deleteHtml = '<form method="delete" action="categories/' + item['_id']['$oid'] + '"> <button > Delete </button> </form>';
+        fetch('categories/' + item['_id']['$oid'], {
             method: 'DELETE',
-            body:deleteHtml
+            body: deleteHtml
         }).catch((e) => (console.log('basarısız', e))).then((res) => {
-                console.log(res)
                 location.reload()
-
             }
         )
     }
